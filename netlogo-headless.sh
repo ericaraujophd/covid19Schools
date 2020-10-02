@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE_DIR="/Applications/NetLogo 6.1.1"
+#BASE_DIR="/Applications/NetLogo 6.1.1"
+BASE_DIR="./NetLogo 6.1.1"
 
 if [[ ${JAVA_HOME+1} ]]; then
   JAVA="${JAVA_HOME}/bin/java"

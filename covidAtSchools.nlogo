@@ -1,17 +1,17 @@
 ; SCHOOL DYNAMICS OF COVID-19 IN LAVRAS
 ; PROGRAMMER: ERIC ARAUJO
-; LAST UPDATE: 2020-05-23
+; LAST UPDATE: 2020-10-01
 
 extensions [csv nw]
 
 globals [
-  sectors-list               ; list containing all sectors used for the simulation
+  sectors-list               ; list containing all (demographic) sectors used for the simulation
   #-icus-available           ; ICUs available
   #-icus-total               ; ICUs existant
   deaths-virus               ; deaths caused by complications from the infection
   deaths-infra               ; deaths caused by the lack of ICUs available
   ; statistics to be loaded
-  contact-daily              ; number of contacts per day
+  contacts-daily              ; number of contacts per day
   contagion-prob-daily       ; daily probability for transmission of the infection according to the viral charge
 
   weekday-effect             ; effect on the number of contacts during the week
@@ -39,12 +39,12 @@ breed [people person]
 people-own [
   student?
   teacher?
-  school-member-id
+  school-member-id     ;
   age
   gender
-  classes-list
-  house-id
-  sector-id
+  classes-list         ; list of classes the student/teacher participate
+  house-id             ; id of the house where the agent lives
+  sector-id            ; (demographic) sector where the person lives
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   infected?         ; not infected or infected?
@@ -77,8 +77,11 @@ undirected-link-breed [ relatives relative ]
 undirected-link-breed [ colleagues colleague ]
 
 
-
 to setup
+  ifelse load-world? [ load-setup ] [ initial-setup ]
+end
+
+to initial-setup
   clear-all
   if debug? [ show "Debug is on! Initiating setup from beginning!\n" ]
 
@@ -124,7 +127,7 @@ end
 to load-statistics
   let file1 "./inputs/infection/contacts_daily.csv"
   let file2 "./inputs/infection/contagion_chance.csv"
-  set contact-daily read-csv-to-list file1
+  set contacts-daily read-csv-to-list file1
   set contagion-prob-daily read-csv-to-list file2
   if debug? [show "Loaded statistics for the daily contacts and contagion probabilities. (1/9)\n"]
 end
@@ -462,7 +465,7 @@ to disease-development
     ; increment day
     set days-infected days-infected + 1
     ; update information from the cases
-    set contacts-infected item days-infected (item severity contact-daily) ; get the number of contacts based on the severity of the person and the days of infection
+    set contacts-infected item days-infected (item severity contacts-daily) ; get the number of contacts based on the severity of the person and the days of infection
     set prob-spread (item days-infected (item severity contagion-prob-daily)) * 2 ;;;;;; XXXXXXXX
 
     if severity = 0 [
@@ -558,6 +561,7 @@ to interact-with-others
     ; weekday-effect is global
 
     let sTurtle self
+
     ; 50% home 45% school 5% random
 
     set contacts-household round (contacts-total * contacts-infected * household-effect * weekday-effect * 0.50)
@@ -660,7 +664,7 @@ to infect [ agent ]
         ]
       ]
     ]
-    set contacts-infected item days-infected (item severity contact-daily) ; get the number of contacts based on the severity of the person and the days of infection
+    set contacts-infected item days-infected (item severity contacts-daily) ; get the number of contacts based on the severity of the person and the days of infection
     set prob-spread item days-infected (item severity contagion-prob-daily)
   ]
 end
@@ -749,10 +753,10 @@ ticks
 30.0
 
 SWITCH
-124
-157
-264
-190
+111
+326
+251
+359
 debug?
 debug?
 1
@@ -859,23 +863,6 @@ NIL
 NIL
 1
 
-BUTTON
-106
-14
-206
-47
-Load Setup
-load-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 MONITOR
 18
 59
@@ -949,10 +936,10 @@ count people with [dead?]
 11
 
 SWITCH
-122
-110
-264
-143
+109
+279
+251
+312
 schools?
 schools?
 0
@@ -975,10 +962,10 @@ perc-isolated
 HORIZONTAL
 
 SWITCH
-122
-65
-266
-98
+109
+234
+253
+267
 self-isolation?
 self-isolation?
 0
@@ -995,6 +982,17 @@ count people with [isolated?]
 17
 1
 11
+
+SWITCH
+115
+63
+246
+96
+load-world?
+load-world?
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?

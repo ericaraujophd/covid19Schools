@@ -43,6 +43,21 @@ The *model* folder is where the Netlogo code is. There you can find:
 
 The netlogo code can be run using the interface and BehaviorSpace experiment setups, or it can be executed headless. For more information on how to run it headless, [check this out](https://ccl.northwestern.edu/netlogo/docs/behaviorspace.html).
 
+## Running
+
+```
+./netlogo-headless.sh \
+  --model covidAtSchools.nlogo \
+  --experiment self-isolation-off \
+  --table table-off.csv \
+  --spreadsheet spreadsheet-off.csv
+
+./netlogo-headless.sh \
+  --model covidAtSchools.nlogo \
+  --experiment self-isolation-on \
+  --table table-on.csv \
+  --spreadsheet spreadsheet-on.csv
+ ```
 ## QGIS
 
 ### Adding IBGE data from shapefile to the school dots
